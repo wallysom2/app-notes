@@ -76,8 +76,6 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
   env = new Proxy(parsed.data, {
     get(target, prop) {
       if (typeof prop !== "string") return undefined;
-      // Throw a descriptive error if a server-side env var is accessed on the client
-      // Otherwise it would just be returning `undefined` and be annoying to debug
       if (!isServer && !prop.startsWith("NEXT_PUBLIC_"))
         throw new Error(
           process.env.NODE_ENV === "production"
@@ -85,7 +83,8 @@ if (!!process.env.SKIP_ENV_VALIDATION == false) {
             : `❌ Attempted to access server-side environment variable '${prop}' on the client`,
         );
       /*  @ts-ignore - can't type this properly in jsdoc */
-      return target[prop];
+      const value = target[prop];
+      return value != null ? value.toString() : value;
     },
   });
 }
