@@ -69,6 +69,13 @@ const Content: React.FC = () => {
     },
   });
 
+  const handleNoteCreation = () => {
+    if (!selectedTopic?.id) {
+      return console.error("No topic selected"), null;
+    }
+  };
+  handleNoteCreation();
+
   const deleteNote = api.note.delete.useMutation({
     onSuccess: () => {
       void refetchNotes();
